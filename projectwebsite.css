@@ -1,17 +1,28 @@
+@font-face {
+    font-family: 'barcade_expandedexpanded';
+    src: url('barcadeexpand-webfont.woff2') format('woff2'),
+         url('barcadeexpand-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body { 
     background-color: rgb(0, 0, 0);
     font-family : Consolas, monaco, monospace;
     background-image:url( images/background.webp);
 }
-
+h1 {
+    font-family : barcade_expandedexpanded;
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+}
 p {
     font-weight: bold;
     color: rgb(177, 51, 135);
     font-size: 20px;
-    font-style: italic;
+    font-style: 
     opacity: 1;
-}  
-
+}
 /* Style the tab buttons */
 .tablink {
     background-color: rgb(236, 162, 187);
@@ -25,12 +36,10 @@ p {
     width: 25%;
     font-family : Consolas, monaco, monospace;
 }
-  
 /* Change background color of buttons on hover */
 .tablink:hover {
     background-color: rgb(88, 37, 77);
 }
-  
 /* Set default styles for tab content */
 .tabcontent {
     color: white;
@@ -38,29 +47,36 @@ p {
     padding: 50px;
     text-align: center;
 }
-  
+.loginbutton {
+    background-color: rgb(88, 37, 77);
+    font-family: barcade_expandedexpanded;
+    font-size:20px ;
+    color: #FAF5F8;
+    position: absolute;
+    top: 20;
+    right: 20;
+}
 /* Style each tab content individually */
 #homeip {
     background-color:rgba(228, 180, 239, 0.1) ;
     color:rgb(14, 0, 8)
 }
-
 #homeip h1,p {
     opacity: 1;
     color: white;
 } 
-
 #documentation {
     background-color:#e4b4ef;
-    opacity: 1;              
+    opacity: 1;  
+    color: white;            
 }
-  
 #ineed {
     background-color:#e4b4ef ;
     opacity: 1;  
+    color: white;
 }
-
 #login {
     background-color:#e4b4ef; 
     opacity: 1;  
+    color: white;
 }
