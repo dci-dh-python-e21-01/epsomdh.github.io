@@ -11,6 +11,7 @@ body {
     font-family : Consolas, monaco, monospace;
     background-image:url( images/background.webp);
 }
+
 h1 {
     font-family : barcade_expandedexpanded;
     font-size: 50px;
@@ -20,7 +21,6 @@ p {
     font-weight: bold;
     color: rgb(177, 51, 135);
     font-size: 20px;
-    font-style: 
     opacity: 1;
 }
 /* Style the tab buttons */
