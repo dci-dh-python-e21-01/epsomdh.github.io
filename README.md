@@ -1,1 +1,1 @@
-This is a personal project which hasn't be decided yet..
+This is a personal project that hasn't been decided yet..
