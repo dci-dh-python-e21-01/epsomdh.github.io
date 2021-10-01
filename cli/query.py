@@ -14,10 +14,10 @@ if args.user_name:
 else:
  user_name= (input("What is your user name?:"))
 
-print("Hello", user_name)
+print("Greetings", user_name)
 
 while(repeat):
-    print("What would you like to do?")
+    print("How can I be of service?")
 
     action= int(input("1. List items by Warehouse?\n2. Search an item and place an order?\n3. Quit  "))
     if action==1:
@@ -27,8 +27,16 @@ while(repeat):
         item_name= (input("What is the name of the item?"))
         elm_count_1=warehouse1.count(item_name)
         elm_count_2=warehouse2.count(item_name)
+
         if item_name in warehouse1 and warehouse2:
-           print("Location: Both Warehouses", (elm_count_1+elm_count_2))
+           print("Location: Both Warehouses")
+           if elm_count_1>elm_count_2:
+            print ("Maximum availability:",(elm_count_1),"in Warehouse 1")
+           elif elm_count_1<elm_count_2:
+            print ("Maximum availability:",(elm_count_2),"in Warehouse 2")
+           else:
+               print("Product exists in similar quantities in both warehouses",elm_count_1, elm_count_2)
+
         elif item_name in warehouse1:
            print("Amount Available:",(elm_count_1))
            print("Location: Warehouse1")
@@ -43,4 +51,5 @@ while(repeat):
         repeat = False
         print("Thank you for your visit,",user_name,"!")
 
-#that's all for today!
+#that's all for today! 
+# I lied :(
