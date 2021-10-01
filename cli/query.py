@@ -21,7 +21,9 @@ while(repeat):
 
     action= int(input("1. List items by Warehouse?\n2. Search an item and place an order?\n3. Quit  "))
     if action==1:
-        print (warehouse1, warehouse2)
+     for i in warehouse1 and warehouse2:
+         print(i)
+         print("-----------------------------------")
 
     if action==2:
         item_name= (input("What is the name of the item?"))
@@ -35,7 +37,7 @@ while(repeat):
            elif elm_count_1<elm_count_2:
             print ("Maximum availability:",(elm_count_2),"in Warehouse 2")
            else:
-               print("Product exists in similar quantities in both warehouses",elm_count_1, elm_count_2)
+               print("Product exists in similar quantities in both warehouses:",elm_count_1,"in warehouse1 ", "and", elm_count_2,"in warehouse2")
 
         elif item_name in warehouse1:
            print("Amount Available:",(elm_count_1))
@@ -49,7 +51,7 @@ while(repeat):
     # Else, if they pick 3
     if action==3:
         repeat = False
-        print("Thank you for your visit,",user_name,"!")
+        print("Safe travels,",user_name,"!")
 
-#that's all for today! 
+#that's all for today!
 # I lied :(
