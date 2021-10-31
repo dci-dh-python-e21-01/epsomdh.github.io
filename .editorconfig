@@ -1,16 +1,17 @@
 # EditorConfig is awesome: https://EditorConfig.org
 
-# top-most EditorConfig file
+# top-most EditorConfig file 
+#to root einai to root tou project mou
 root = true
 
 # Unix-style newlines with a newline ending every file
-[*]
+[*] # * simainei gia ola ta arxeia
 end_of_line = lf
-insert_final_newline = true
+insert_final_newline = true # tha vazei ena enter kathe fora pou teleiwnei ena arxeio
 
 # Matches multiple files with brace expansion notation
 # Set default charset
-[*.{js,py}]
+[*.{js,py}] 
 charset = utf-8
 
 # 4 space indentation
