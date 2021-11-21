@@ -1,90 +1,66 @@
-from data import stock #stock is a list of dictionaries
 from datetime import datetime
+from classes import User
+from classes import Employee
+from loader import Loader
+
+personnel = Loader(model="personnel")
+stock = Loader(model="stock")
+user = User()
+
+actions = list()
+
+### Fourth Iteration version
 
 '''
-This method searches in a stocklist an item that is found
-in a warehouse with a provided number and then prints the item and 
-the warehouse that it's found
+Print the list of items
 '''
-def printWarehouseItems(stocklist, warehouse_number):
-    # first time we call with stock, 1
-    # so it is like there are two lines that say :
-    # stocklist = stock ( first argument )
-    # warehouse_number = 1 ( second argument )
-    print("Items in Warehouse", warehouse_number, ":")
-    for x in stocklist:
-        if x["warehouse"] == warehouse_number:
-            print ("-", x["state"], x["category"])
+def printWarehouseItems(warehouse):
+    print("Items in Warehouse", warehouse.id, ":")
+    for item in warehouse.stock:
+        print ("-", item)
+    
+    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+    print("End of list of items in Warehouse #", warehouse.id)
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
 
-def countWarehouseItems(stocklist, warehouse_number):
-    # first time we call with stock, 1
-    # so it is like there are two lines that say :
-    # stocklist = stock ( first argument )
-    # warehouse_number = 1 ( second argument )
-    count = 0#this will hold the amount of times
-    for x in stocklist:
-        if x["warehouse"] == warehouse_number:
-            count+=1
-
-    print("Total items in Warehouse",warehouse_number,":",count)
+def countWarehouseItems(warehouse):
+    print("Total items in Warehouse", warehouse.id, ":", warehouse.occupancy())
+    addAction("Listed " + str(warehouse.occupancy()) + " Items in Warehouse " + str(warehouse.id))
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-
-'''
-Returns how many items exist
-'''
-def searchWarehouseHowMany(stocklist, warehouse_number, item_to_search):
-    count = 0
-    for x in stocklist:
-        if x["warehouse"] == warehouse_number:
-            full_item_name = x["state"] + " " + x["category"]
-            if(full_item_name.lower() == item_to_search.lower()):#the .lower makes search case insensitive
-                count+=1
-
-    return count
 
 def availabilityAnditemDaysInStock(stocklist, item_to_search) :
-    count_warehouse1 = 0
-    count_warehouse2 = 0
+    counts = {}
 
-    for x in stocklist:
-        full_item_name = x["state"] + " " + x["category"]
-        if(full_item_name.lower() == item_to_search.lower()): #the .lower makes search case insensitive
-            if x["warehouse"] == 1:
-                count_warehouse1 += 1
-            if x["warehouse"] == 2:
-                count_warehouse2 += 1
+    for warehouse in stocklist:
+        counts.setdefault("warehouse " + warehouse.id, 0)
+        counts["warehouse " + warehouse.id] = len(warehouse.search(item_to_search))
 
-    print("Amount available", count_warehouse1 + count_warehouse2)
-    if (count_warehouse1 + count_warehouse2) != 0:
+    print("Amount available", sum(counts.values()))
+    if sum(counts.values()) != 0:
         print("Location:")
 
-        for x in stocklist:
-            full_item_name = x["state"] + " " + x["category"]
-            if(full_item_name.lower() == item_to_search.lower()): #the .lower makes search case insensitive
-                start_date = datetime.today()
-                end_date = datetime.strptime(x["date_of_stock"], "%Y-%m-%d %H:%M:%S")
-                days_in_stock = (start_date - end_date)
-                print("- Warehouse", x["warehouse"], "(in stock for", days_in_stock.days , "days)")
+        for warehouse in stocklist:
+            for item in warehouse.stock:
+                if(item.__str__().lower() == item_to_search.lower()): #the .lower makes search case insensitive
+                    start_date = datetime.today()
+                    end_date = datetime.strptime(item.date_of_stock, "%Y-%m-%d %H:%M:%S")
+                    days_in_stock = (start_date - end_date)
+                    print("- Warehouse", warehouse.id, "(in stock for", days_in_stock.days , "days)")
         print()
 
-        if count_warehouse1 > count_warehouse2:
-            print("Maximum availability:", count_warehouse1, "in Warehouse 1")
-        elif count_warehouse2 > count_warehouse1:
-            print("Maximum availability:", count_warehouse2, "in Warehouse 2")
-        else:
-            print("Product exists in same quantities in both warehouses")
+        print("Maximum availability:", max(counts.values()), "in", max(counts, key=counts.get))
     else:
         print("Location: Not in stock")
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+    addAction("Searched for " + item_to_search)
+    return counts
 
 def  printCategories(stocklist):
     categoryDictionary = {} # Creating a new, empty dictionary
-    for x in stocklist: # for each item in stock
-        # if the key named by the item category exists 'setdefault' will do nothing
-        # if the key named by the item category does not exist, it will be appended to the dictionary with the initial value 0
-        categoryDictionary.setdefault(x["category"], 0)#imagine this as an empty vase with 0 items inside
-        categoryDictionary[x["category"]] += 1 # increasing the count of the items in this category(vase), instead of creating a new category
+    for warehouse in stocklist: 
+        for x in warehouse.stock:
+            categoryDictionary.setdefault(x.category, 0)#imagine this as an empty vase with 0 items inside
+            categoryDictionary[x.category] += 1 # increasing the count of the items in this category(vase), instead of creating a new category
 
     count = 1#just prints 1.2.3...
     categoryList = []#preparing an empty lists to add the categories in an ordered way
@@ -92,82 +68,153 @@ def  printCategories(stocklist):
         print(count, ".", key, "(", value, ")")
         categoryList.append(key)#adding the category name into the list
         count += 1
+
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-    category_to_browse = int(input("Type the number of the category to browse: "))
-    print("List of",categoryList[category_to_browse-1],"available:")#in reality the nth item is the -1 index,
-                                                                    #from categorylist[number of category to browse]
-    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-    for x in stocklist:
-        if x["category"] == categoryList[category_to_browse-1]:
-            print(x["state"],x["category"],", Warehouse:",x["warehouse"])
-    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+    
+    try:
+        category_to_browse = int(input("Type the number of the category to browse: "))
+        print("List of", categoryList[category_to_browse-1], "available:") # in reality the nth item is the -1 index,
+                                                                     # from categorylist[number of category to browse]
+        print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+        for warehouse in stocklist:
+            for item in warehouse.stock:
+                if item.category == categoryList[category_to_browse-1]:
+                    print(item, ", Warehouse:", warehouse.id)
 
-## - Part where we define the user name
-# first asking the username from the user to start
-user_name = (input("What is your user name?: "))
+        print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+        addAction("Printed Categories for " + categoryList[category_to_browse-1] + " Items")
+    except:
+        print("Please Only Enter a number.")
 
-# if the user didnt provide a username, we put 'stranger'
-if user_name == "":# if user name was not provided we set it to 'stranger'
-    user_name = "stranger"
 
-print("Greetings", user_name, "!")
-## - End of part where we handle user name
+'''
+Get the user name
+'''
+def getUser():
+    ## - Part where we define the user name
+    # first asking the username from the user to start
+    global user
+    user_name = (input("What is your user name?: "))
+    
+    user = findUser(personnel, user_name)
+    if user == None:
+        user = User(user_name)
 
-## - Part where we handle the program main loop
-repeat = True # we will do the main loop until this is set to false
-while(repeat):
+    addAction("Provided user name " + user_name)
+
+def findUser(personnel, user_name):
+    for person in personnel:
+        if person.is_named(user_name):
+            return person
+    
+    # for person in personnel:
+    #     if person.head_of:
+    #         return findUser(person.head_of, user_name)
+    
+    return None
+
+
+'''
+ Get the operation selected
+'''
+def getOperation():
     print("How can I be of service?")
 
-    action= int(input("1. List items by Warehouse?\n2. Search an item and place an order?\n3. Browse by category\n4. Quit\n--- Type the number of the operation:  "))
+    action = int(input("1. List items by Warehouse?\n2. Search an item and place an order?\n3. Browse by category\n4. Quit\n--- Type the number of the operation:  "))
+    return action
+            
+'''
+Add action to history
+'''
+def addAction(action_string):
+    actions.append(action_string) 
+
+
+#######################################################################################################################################################################
+## - Part where we handle the program main loop
+#######################################################################################################################################################################
+
+repeat = True # we will do the main loop until this is set to false
+
+getUser()
+user.greet()
+warehouses = len(list(stock))
+
+## - End of part where we handle user name
+while(repeat):
+    
+    action = getOperation()
     if action == 1:
         ## - Part where we handle Action 1 - 
-        # defined in https://github.com/dci-dh-python-e21-01/python-projects-individual.V1.0/tree/main/2_Python-Basics
-        '''
-        If the user picked 1,
-        the script should print each of the items in each of the warehouses
-        (first all items from a warehouse and then all items from the other).
-        When printing the list of items, and at the end of the whole list,
-        print the total amount of items in stock on each warehouse
-        '''
+        # Print the list of Items
         print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-        printWarehouseItems(stock, 1)
 
-        input("Press any key to continue to warehouse #2")
-        printWarehouseItems(stock, 2)
-
-        countWarehouseItems(stock, 1)
-        countWarehouseItems(stock, 2)
+        for warehouse in stock:
+            printWarehouseItems(warehouse)
+            input("Press any key to continue to next warehouse")
+        
+        for warehouse in stock:
+            countWarehouseItems(warehouse)
 
     elif action == 2:
-        item_to_search = (input("What is the name of the item?: "))
-        print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-        availabilityAnditemDaysInStock(stock, item_to_search)
-        ## Part where we handle the order making
 
-        print("Would you like to place an order for this item?")
-        order_action = int(input("1.Yes \n2.No\n: --- Type the number of the operation:  "))
-        if order_action == 1:
-            item_number = int(input("How many items would you like?:  "))
-            #checking if we have enough items
-            count_warehouse1 = searchWarehouseHowMany(stock, 1, item_to_search)
-            count_warehouse2 = searchWarehouseHowMany(stock, 2, item_to_search)
+        if user.is_authenticated == False:
+            password = input("Please input your password in order to do this action: ")
+            user.authenticate(password)
 
-            if item_number <= (count_warehouse1 + count_warehouse2): #if yes
-                print("An order of",item_number,item_to_search,"has been placed") #make order
-            else:#if not
-                print("There are not this many items available.The maximum amount that can be ordered is ",(count_warehouse1 + count_warehouse2))#say we don't have that many items
-                max_order = int(input("Would you like to order the maximum amount available?,\n1.Yes\n2.No\n:--- Type the number of the operation:  "))#ask if they want to order what we have
-                if max_order == 1:#if yes
-                    print("An order of",(count_warehouse1 + count_warehouse2),item_to_search,"has been placed")#print that order is placed
-        print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-        ## End of part where we place order
+        while user.is_authenticated == False:
+            print("You are not allowed to perform this action until you are Authenticated as an Employee.")
+            addAction("Tried to order as User")
+
+            new_choice = int(input("Please select an option :\n1. login.\n2. Go back to main menu "))
+        
+            if new_choice == 1:
+                print("Please enter you Employee Credentials: ")
+                getUser()
+                password = input("Please input your password in order to do this action: ")
+                user.authenticate(password)
+                user.greet()
+        
+            else:
+                break
+            
+        if user.is_authenticated:
+            item_to_search = (input("What is the name of the item?: "))
+            print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+            counts = availabilityAnditemDaysInStock(stock, item_to_search)
+            ## Part where we handle the order making
+
+            print("Would you like to place an order for this item?")
+            order_action = int(input("1.Yes \n2.No\n: --- Type the number of the operation:  "))
+
+            if order_action == 1:
+                item_number = int(input("How many items would you like?:  "))
+
+                if item_number <= sum(counts.values()): #if yes
+                    print("An order of", item_number, item_to_search, "has been placed") #make order
+                    addAction("Made an order for " + str(item_number) + " of " + item_to_search)
+                else:#if not
+                    print("There are not this many items available.The maximum amount that can be ordered is ", sum(counts.values()))#say we don't have that many items
+                    max_order = int(input("Would you like to order the maximum amount available?,\n1.Yes\n2.No\n:--- Type the number of the operation:  "))#ask if they want to order what we have
+                    if max_order == 1:#if yes
+                        print("An order of", sum(counts.values()), item_to_search, "has been placed")#print that order is placed
+                        addAction("Made a maximum order for " + str(sum(counts.values())) + " of " + item_to_search)
+            print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+            ## End of part where we place order
+        else:
+            addAction("Tried to order as User")
     elif action == 3:
         print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
         printCategories(stock)
     elif action == 4:
         # End the while loop by setting repeat to False
         repeat = False
-        print("Safe travels,", user_name,"!")
+        user.bye(actions)
+
     else:
         print("Invalid Action")
         print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+
+#######################################################################################################################################################################
+## - End program main loop
+#######################################################################################################################################################################
