@@ -18,7 +18,7 @@ def printWarehouseItems(warehouse):
     print("Items in Warehouse", warehouse.id, ":")
     for item in warehouse.stock:
         print ("-", item)
-    
+
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
     print("End of list of items in Warehouse #", warehouse.id)
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
@@ -57,7 +57,7 @@ def availabilityAnditemDaysInStock(stocklist, item_to_search) :
 
 def  printCategories(stocklist):
     categoryDictionary = {} # Creating a new, empty dictionary
-    for warehouse in stocklist: 
+    for warehouse in stocklist:
         for x in warehouse.stock:
             categoryDictionary.setdefault(x.category, 0)#imagine this as an empty vase with 0 items inside
             categoryDictionary[x.category] += 1 # increasing the count of the items in this category(vase), instead of creating a new category
@@ -70,7 +70,7 @@ def  printCategories(stocklist):
         count += 1
 
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-    
+
     try:
         category_to_browse = int(input("Type the number of the category to browse: "))
         print("List of", categoryList[category_to_browse-1], "available:") # in reality the nth item is the -1 index,
@@ -95,7 +95,7 @@ def getUser():
     # first asking the username from the user to start
     global user
     user_name = (input("What is your user name?: "))
-    
+
     user = findUser(personnel, user_name)
     if user == None:
         user = User(user_name)
@@ -105,12 +105,19 @@ def getUser():
 def findUser(personnel, user_name):
     for person in personnel:
         if person.is_named(user_name):
-            return person
-    
-    # for person in personnel:
-    #     if person.head_of:
-    #         return findUser(person.head_of, user_name)
-    
+            return person # If we found the user, return as we dont have to seach any more
+
+    # As a last action we have to see if someone is an subordinate of another person
+    # according to the instuctions, these persons shoudl also be able to order.
+    for person in personnel:
+        if person.head_of:
+            for subordinate in person.head_of:
+                subordinate.setdefault("head_of", []) # setting a default head_of on the data.py list of dictionaries so that we can use it for creating a new Employee object
+                subUser = Employee(subordinate["user_name"] , subordinate["password"], subordinate["head_of"]) # Creating a new Employee object, based on the items inside the current list
+                foundUser = findUser([subUser], user_name) # searching recursively on the new Object to find a perosn that we could be heads off
+                if foundUser != None: # if we didnt find anything we should return None
+                    return foundUser # otherwise we return the user found
+
     return None
 
 
@@ -167,17 +174,17 @@ while(repeat):
             addAction("Tried to order as User")
 
             new_choice = int(input("Please select an option :\n1. login.\n2. Go back to main menu "))
-        
+
             if new_choice == 1:
                 print("Please enter you Employee Credentials: ")
                 getUser()
                 password = input("Please input your password in order to do this action: ")
                 user.authenticate(password)
                 user.greet()
-        
+
             else:
                 break
-            
+
         if user.is_authenticated:
             item_to_search = (input("What is the name of the item?: "))
             print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
