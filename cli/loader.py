@@ -14,8 +14,10 @@ class MissingClassError(Exception):
             self.message = f"Missing class {name}."
         super().__init__(self.message)
 
+
 class MissingArgument(Exception):
     pass
+
 
 class Loader:
     """Main data loader class."""
@@ -26,7 +28,9 @@ class Loader:
     def __init__(self, *args, **kwargs):
         """Constructor."""
         if "model" not in kwargs:
-            raise MissingArgument("The loader requires a `model` keyword argument to work.")
+            raise MissingArgument(
+                "The loader requires a `model` keyword argument to work."
+            )
         self.model = kwargs["model"]
         self.parse()
 
@@ -58,12 +62,12 @@ class Loader:
 
         for item in items:
             warehouse_id = str(item["warehouse"])
-        
+
             if warehouse_id not in warehouses.keys():
                 warehouses[warehouse_id] = Warehouse(warehouse_id)
-        
+
             warehouses[warehouse_id].add_item(Item(**item))
-        
+
         return list(warehouses.values())
 
     def __iter__(self, *args, **kwargs):

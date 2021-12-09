@@ -1,8 +1,10 @@
 class User:
-    def __init__(self, user_name = "Anonymous"):
-        self._name = user_name
+    def __init__(
+        self, user_name="Anonymous"
+    ):  # if no value it will be by default Anonymous
+        self._name = user_name  # _name means it's protected]
         self.is_authenticated = False
-    
+
     def authenticate(self, password) -> bool:
         return False
 
@@ -18,8 +20,9 @@ class User:
     def bye(self, actions):
         print("\nThank you for your visit", self._name, "!")
 
+
 class Employee(User):
-    def __init__(self, user_name, password, head_of = []):
+    def __init__(self, user_name, password, head_of=[]):
         super().__init__(user_name)
         self.__password = password
         self.head_of = head_of
@@ -27,7 +30,7 @@ class Employee(User):
     def authenticate(self, password):
         if self.__password == password:
             self.is_authenticated = True
-        
+
         return self.is_authenticated
 
     def order(self, item, amount):
@@ -46,8 +49,9 @@ class Employee(User):
         for action in actions:
             print(action_count, ".", action)
             action_count += 1
-        
+
         print("Safe travels,", self._name, "!")
+
 
 class Item:
     def __init__(self, state, category, warehouse, date_of_stock):
@@ -58,11 +62,12 @@ class Item:
     def __str__(self) -> str:
         return self.state + " " + self.category
 
+
 class Warehouse:
     def __init__(self, warehouse_id):
         self.id = warehouse_id
         self.stock = []
-        
+
     def occupancy(self) -> int:
         return len(self.stock)
 
