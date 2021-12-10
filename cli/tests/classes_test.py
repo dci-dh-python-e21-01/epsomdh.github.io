@@ -72,3 +72,20 @@ class test_warehouse(unittest.TestCase):
         Employees = Employee("Robert Nono", "1234")
         object = Employee(user_name="user", password="password", head_of=[Employees])
         self.assertEqual(object.head_of, [Employees])
+
+    # test 5
+
+    def test_if_warehouse_created(self):
+        object = Warehouse()
+        self.assertTrue(object.id == None)
+
+    def test_if_warehouse_sameid(self):
+        object = Warehouse("warehouse_id")
+        self.assertTrue(object.id == "warehouse_id")
+
+    def test_if_stock_empty_list(self):
+        object = Warehouse("warehouse_id")
+        self.assertEqual(object.stock, [])
+
+    def test_occupancy_stock_len(self):
+        pass

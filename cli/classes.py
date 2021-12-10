@@ -64,7 +64,7 @@ class Item:
 
 
 class Warehouse:
-    def __init__(self, warehouse_id):
+    def __init__(self, warehouse_id=None):
         self.id = warehouse_id
         self.stock = []
 
