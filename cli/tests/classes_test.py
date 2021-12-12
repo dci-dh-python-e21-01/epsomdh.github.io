@@ -8,6 +8,7 @@ sys.path.append(
 from classes import User, Employee, Item, Warehouse
 from query import (
     getUser,
+    getOperation,
 )  # importing sys(tem) in order to define where the actual classes.py is
 from contextlib import contextmanager
 
@@ -169,3 +170,32 @@ class test_warehouse(unittest.TestCase):
             self.assertTrue(issubclass(type(user), User))
 
     # test 2
+    def test_all_options_exist(self):
+        with mock_input(4):
+            answer = []
+            with mock_output(answer):
+                getOperation()
+                self.assertEqual(
+                    answer[0],
+                    "1. List items by Warehouse?\n2. Search an item and place an order?\n3. Browse by category\n4. Quit\n---",
+                )
+
+    def test_all_option_correct(self):
+        with mock_input(1):
+            answer = []
+            with mock_output(answer):
+                self.assertEqual(getOperation(), 1)
+        with mock_input(2):
+            answer = []
+            with mock_output(answer):
+                self.assertEqual(getOperation(), 2)
+        with mock_input(3):
+            answer = []
+            with mock_output(answer):
+                self.assertEqual(getOperation(), 3)
+        with mock_input(4):
+            answer = []
+            with mock_output(answer):
+                self.assertEqual(getOperation(), 4)
+
+    # test 3

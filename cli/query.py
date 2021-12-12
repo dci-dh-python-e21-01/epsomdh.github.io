@@ -173,13 +173,16 @@ def findUser(personnel, user_name):
 
 
 def getOperation():
-    print("How can I be of service?")
 
-    action = int(
-        input(
-            "1. List items by Warehouse?\n2. Search an item and place an order?\n3. Browse by category\n4. Quit\n--- Type the number of the operation:  "
-        )
+    print(
+        "1. List items by Warehouse?\n2. Search an item and place an order?\n3. Browse by category\n4. Quit\n---"
     )
+    try:
+        action = int(input("Type the number of the operation: "))
+    except:
+        # If user just presses non int, we default ot exit
+        action = 4
+
     return action
 
 
@@ -206,7 +209,7 @@ if __name__ == "__main__":
 
     ## - End of part where we handle user name
     while repeat:
-
+        print("How can I be of service?")
         action = getOperation()
         if action == 1:
             ## - Part where we handle Action 1 -
