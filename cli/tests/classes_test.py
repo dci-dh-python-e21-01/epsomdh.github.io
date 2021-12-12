@@ -1,54 +1,58 @@
 import unittest  # importing unittest to run tests
-import sys  # importing sys(tem) in order to define where the actual classes.py is
+import sys
 
 sys.path.append(
     "../"
 )  # appending to path the folder one level up, which contains the python files that have our warehouse project
+
 from classes import User, Employee, Item, Warehouse
-import query
-from unittest.case import TestCase
+from query import (
+    getUser,
+)  # importing sys(tem) in order to define where the actual classes.py is
 from contextlib import contextmanager
 
 
 @contextmanager
 def mock_input(mock):
-    original_input = __builtins__.input
-    __builtins__.input = lambda _: mock
+    # This needed to be changed and function as a dictionary, otherwise
+    # we get a 'dict' object has no attribute 'input' error
+    original_input = __builtins__["input"]
+    __builtins__["input"] = lambda _: mock
     yield
-    __builtins__.input = original_input
+    __builtins__["input"] = original_input
 
 
 @contextmanager
 def mock_output(mock):
-    original_print = __builtins__.print
-    __builtins__.print = lambda *value: [mock.append(val) for val in value]
+    original_print = __builtins__["print"]
+    __builtins__["print"] = lambda *value: [mock.append(val) for val in value]
     yield
-    __builtins__.print = original_print
+    __builtins__["print"] = original_print
 
 
 class test_warehouse(unittest.TestCase):
     def test_class_User(self):
         try:
             User()
-        except NameError:  # this means that the class we tried to instanciate does not exist
+        except NameError:  # this means that the class we tried to instantiate does not exist
             self.fail("Class does not exist")
 
     def test_class_Employee(self):
         try:
             Employee("username", "password")
-        except NameError:  # this means that the class we tried to instanciate does not exist
+        except NameError:  # this means that the class we tried to instantiate does not exist
             self.fail("Class does not exist")
 
     def test_class_Item(self):
         try:
             Item("state", "category", "warehouse", "date_of_stock")
-        except NameError:  # this means that the class we tried to instanciate does not exist
+        except NameError:  # this means that the class we tried to instantiate does not exist
             self.fail("Class does not exist")
 
     def test_class_Warehouse(self):
         try:
             Warehouse("id")
-        except NameError:  # this means that the class we tried to instanciate does not exist
+        except NameError:  # this means that the class we tried to instantiate does not exist
             self.fail("Class does not exist")
 
     # Task 2
@@ -150,3 +154,18 @@ class test_warehouse(unittest.TestCase):
 
     # Part 2
     # test 1
+    def test_user_is_anonymous(self):
+        with mock_input("Anon"):
+            user = getUser()
+            self.assertEqual(user._name, "Anon")
+            self.assertNotEqual(type(user), Employee)
+            self.assertEqual(type(user), User)
+
+    def test_user_is_Employee(self):
+        with mock_input("Jeremy"):
+            user = getUser()
+            self.assertEqual(user._name, "Jeremy")
+            self.assertEqual(type(user), Employee)
+            self.assertTrue(issubclass(type(user), User))
+
+    # test 2
