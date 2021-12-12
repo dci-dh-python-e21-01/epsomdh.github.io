@@ -5,7 +5,25 @@ sys.path.append(
     "../"
 )  # appending to path the folder one level up, which contains the python files that have our warehouse project
 from classes import User, Employee, Item, Warehouse
+import query
 from unittest.case import TestCase
+from contextlib import contextmanager
+
+
+@contextmanager
+def mock_input(mock):
+    original_input = __builtins__.input
+    __builtins__.input = lambda _: mock
+    yield
+    __builtins__.input = original_input
+
+
+@contextmanager
+def mock_output(mock):
+    original_print = __builtins__.print
+    __builtins__.print = lambda *value: [mock.append(val) for val in value]
+    yield
+    __builtins__.print = original_print
 
 
 class test_warehouse(unittest.TestCase):
@@ -88,4 +106,47 @@ class test_warehouse(unittest.TestCase):
         self.assertEqual(object.stock, [])
 
     def test_occupancy_stock_len(self):
-        pass
+        object = Warehouse("warehouse_id")
+        # occupancy returns how many items are in the warehouse
+        self.assertEqual(len(object.stock), object.occupancy())
+
+    def test_occupancy_stock_add(self):
+        object = Warehouse("warehouse_id")
+        item = Item("state", "category", "warehouse", "date_of_stock")
+        # when warehouse is being created it has 0 items inside
+        self.assertEqual(object.occupancy(), 0)
+        # adding an item to warehouse
+        object.add_item(item)
+        # testing if it now has 1 item
+        self.assertEqual(object.occupancy(), 1)
+
+    def test_occupancy_stock_search1(self):
+        object = Warehouse("warehouse_id")
+        item1 = Item("state1", "category1", "warehouse", "date_of_stock")
+        item2 = Item("state2", "category2", "warehouse", "date_of_stock")
+
+        object.add_item(item1)
+        object.add_item(item2)
+
+        self.assertEqual(
+            object.search("state1 category1")[0].__str__(), item1.__str__()
+        )
+
+        self.assertEqual(
+            object.search("sTatE2 catEgoRy2")[0].__str__(), item2.__str__()
+        )
+
+    # test 6
+
+    def test_item_stored(self):
+        object = Item("state", "category", "warehouse", "date_of_stock")
+        self.assertTrue(object.state == "state")
+        self.assertTrue(object.category == "category")
+        self.assertTrue(object.date_of_stock == "date_of_stock")
+
+    def test_item_cast_string(self):
+        object = Item("state", "category", "warehouse", "date_of_stock")
+        self.assertEqual(object.__str__(), "state category")
+
+    # Part 2
+    # test 1
